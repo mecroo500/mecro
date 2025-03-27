@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ﬂ«“Ì‰Ê »·Ì‰ﬂÊ «·–Â»Ì</title>
+    <style>
+        :root {
+            --primary-color: #1a1a1a;         /* √”Êœ ›« Õ */
+            --secondary-color: #ffd700;       /* –Â»Ì */
+            --background: #fffde7;           /* √’›— ›« Õ Ãœ« */
+            --accent: #3e2723;               /* »‰Ì œ«ﬂ‰ */
+            --text-primary: #212121;         /* √”Êœ ··ﬁ—«¡… */
+            --gradient-yellow: linear-gradient(135deg, #ffeb3b 0%, #fbc02d 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-image: radial-gradient(circle at center, #fff9c4 0%, #fffde7 100%);
+        }
+
+        .game-container {
+            width: 800px;
+            max-width: 100%;
+            position: relative;
+            padding: 20px;
+        }
+
+        .board {
+            background: var(--gradient-yellow);
+            border-radius: 20px;
+            padding: 40px;
+            position: relative;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.1),
+                inset 0 4px 12px rgba(255, 255, 255, 0.5);
+            border: 3px solid var(--primary-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .board::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(45deg,
+                transparent 48%,
+                rgba(0,0,0,0.05) 50%,
+                transparent 52%);
+            pointer-events: none;
+        }
+
+        .peg-board {
+            display: grid;
+            grid-template-columns: repeat(15, 1fr);
+            gap: 8px;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .peg {
+            width: 8px;
+            height: 8px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            margin: auto;
+            transition: transform 0.1s;
+            box-shadow: 
+                0 2px 4px rgba(0,0,0,0.2),
+                inset 0 -1px 2px rgba(255,255,255,0.2);
+        }
+
+        .ball {
+            width: 20px;
+            height: 20px;
+            background: var(--secondary-color);
+            border-radius: 50%;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 
+                0 0 15px rgba(255, 215, 0, 0.5),
+                inset 0 -3px 6px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .slots {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            position: relative;
+        }
+
+        .slot {
+            width: 60px;
+            height: 80px;
+            background: var(--primary-color);
+            border: 3px solid var(--secondary-color);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            color: var(--secondary-color);
+            box-shadow: 
+                inset 0 4px 12px rgba(255,215,0,0.3),
+                0 4px 8px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slot::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg,
+                transparent 30%,
+                rgba(255,255,255,0.1) 50%,
+                transparent 70%);
+            transform: rotate(45deg);
+            pointer-events: none;
+        }
+
+        .controls {
+            display: flex;
+            gap: 20px;
+            margin-top: 30px;
+            justify-content: center;
+        }
+
+        button {
+            background: var(--primary-color);
+            color: var(--secondary-color);
+            border: none;
+            padding: 16px 32px;
+            border-radius: 35px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 18px;
+            font-weight: bold;
+            border: 2px solid var(--secondary-color);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255,255,255,0.2),
+                transparent
+            );
+            transition: 0.5s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+            background: #2d2d2d;
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        .score-panel {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 253, 231, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid var(--primary-color);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        .score-panel h3 {
+            margin: 0 0 10px;
+            color: var(--primary-color);
+            font-size: 1.1em;
+        }
+
+        @media (max-width: 768px) {
+            .peg-board {
+                grid-template-columns: repeat(10, 1fr);
+            }
+            
+            .slot {
+                width: 40px;
+                height: 60px;
+                font-size: 0.8em;
+            }
+            
+            button {
+                padding: 12px 24px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ‰›” «·ÂÌﬂ· HTML «·”«»ﬁ »œÊ‰  €ÌÌ— -->
+    <div class="score-panel">
+        <h3>«·—’Ìœ: <span id="balance">1000</span> ‰ﬁÿ…</h3>
+        <h3>«·—Â«‰: <span id="betAmount">100</span> ‰ﬁÿ…</h3>
+    </div>
+
+    <div class="game-container">
+        <div class="board">
+            <div class="peg-board" id="pegBoard"></div>
+            <div class="slots" id="slots"></div>
+        </div>
+        
+        <div class="controls">
+            <button id="startBtn">≈»œ√ «··⁄»…</button>
+            <button id="increaseBet">? “Ì«œ… «·—Â«‰</button>
+            <button id="decreaseBet">? Œ›÷ «·—Â«‰</button>
+        </div>
+    </div>
+
+    <script>
+        // ‰›” «·ﬂÊœ JavaScript «·”«»ﬁ »œÊ‰  €ÌÌ—
+        class BlinkoGame {
+            constructor() {
+                this.initBoard();
+                this.setupEventListeners();
+            }
+
+            initBoard() {
+                const pegBoard = document.getElementById('pegBoard');
+                const slots = document.getElementById('slots');
+                
+                // ≈‰‘«¡ «·„”«„Ì—
+                for(let i = 0; i < 150; i++) {
+                    const peg = document.createElement('div');
+                    peg.className = 'peg';
+                    pegBoard.appendChild(peg);
+                }
+
+                // ≈‰‘«¡ «·› Õ« 
+                const slotMultipliers = [5, 2, 1, 0.5, 0, 0.5, 1, 2, 5];
+                slotMultipliers.forEach(multiplier => {
+                    const slot = document.createElement('div');
+                    slot.className = 'slot';
+                    slot.textContent = ${multiplier}x;
+                    slots.appendChild(slot);
+                });
+            }
+
+            setupEventListeners() {
+                const redirect = () => window.location.href = 'https://m.wionbet.com/en/';
+                
+                document.getElementById('startBtn').addEventListener('click', redirect);
+                document.getElementById('increaseBet').addEventListener('click', redirect);
+                document.getElementById('decreaseBet').addEventListener('click', redirect);
+            }
+        }
+
+        const game = new BlinkoGame();
+    </script>
+</body>
+</html>
